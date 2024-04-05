@@ -1,19 +1,16 @@
-pub mod pair;
-pub mod solver;
-pub mod utils;
-
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
-use pyo3::{pyclass, pymethods, pymodule, types::PyModule, Bound, PyResult, Python};
+use pyo3::{pyclass, pymethods, pymodule, Bound, Python};
+
+use geman_mcclure_rotation_solver::{rotation, solver::Solver};
 
 #[pyclass]
-#[pyo3(name = "Solver")]
-pub struct PySolver(solver::Solver);
+pub struct LinearRotationSolver(rotation::LinearSolver);
 
 #[pymethods]
-impl PySolver {
+impl LinearRotationSolver {
     #[new]
     fn new(max_iteration: i32, tol: f64, c: f64) -> Self {
-        PySolver(solver::Solver::new(max_iteration, tol, c))
+        LinearRotationSolver(rotation::LinearSolver::new(max_iteration, tol, c))
     }
 
     unsafe fn solve<'py>(
@@ -41,7 +38,8 @@ impl PySolver {
 }
 
 #[pymodule]
-fn geman_mcclure_rotation_solver(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<PySolver>()?;
-    Ok(())
+#[pyo3(name = "geman_mcclure_rotation_solver")]
+mod py_module {
+    #[pymodule_export]
+    use super::LinearRotationSolver;
 }

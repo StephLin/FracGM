@@ -1,12 +1,16 @@
 [build-system]
-requires = ["maturin>=1,<2"]
+requires = ["maturin>=1.5,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "geman_mcclure_rotation_solver"
-requires-python = ">=3.7"
+name = "geman-mcclure-rotation-solver-python"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
+dynamic = ["version"]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]

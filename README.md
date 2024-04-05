@@ -27,8 +27,10 @@ python3 -m pip install numpy "maturin[patchelf]"
 
 ```bash
 # Develop within a virtualenv
+cd geman-mcclure-rotation-solver-python
 maturin develop
 
 # Build
+cd geman-mcclure-rotation-solver-python
 maturin build --release
 ```

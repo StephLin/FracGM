@@ -4,15 +4,10 @@ use ndarray::Array2;
 
 use osqp;
 
+use crate::solver::Solver;
 use crate::utils;
 
 const DIM: usize = 10;
-
-pub struct Solver {
-    pub max_iteration: i32,
-    pub tol: f64,
-    pub c: f64,
-}
 
 struct F {
     pub mat: Array2<f64>,
@@ -168,48 +163,61 @@ fn compute_psi_norm(
     psi2.sqrt()
 }
 
-impl Solver {
-    pub fn new(max_iteration: i32, tol: f64, c: f64) -> Solver {
-        Solver {
+fn compute_terms(pc1: &Array2<f64>, pc2: &Array2<f64>, c: &f64) -> Vec<Fractional> {
+    let mut terms: Vec<Fractional> = Vec::new();
+    terms.reserve(pc1.dim().0);
+
+    let id3 = Array2::eye(3);
+    for i in 0..pc1.dim().0 {
+        let weight = 1.0;
+        let mut mat_n = Array2::zeros((3, DIM));
+
+        mat_n
+            .slice_mut(s![.., 0..9])
+            .assign(&kron(&pc1.row(i).into_shape((1, 3)).unwrap(), &id3));
+        mat_n
+            .slice_mut(s![.., 9])
+            .assign(&pc2.row(i).t().mapv(|x| -1.0 * x));
+
+        let mat_m = mat_n.t().dot(&mat_n) * weight;
+
+        terms.push(Fractional {
+            f: F::new(mat_m.mapv(|x| c * c * x)),
+            h: H::new(mat_m.clone(), c.clone()),
+        });
+    }
+
+    terms
+}
+
+pub struct LinearSolver {
+    pub max_iteration: i32,
+    pub tol: f64,
+    pub c: f64,
+}
+
+impl LinearSolver {
+    pub fn new(max_iteration: i32, tol: f64, c: f64) -> LinearSolver {
+        LinearSolver {
             max_iteration,
             tol,
             c,
         }
     }
+}
 
-    fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional> {
-        let mut terms: Vec<Fractional> = Vec::new();
-        terms.reserve(pc1.dim().0);
+impl Solver for LinearSolver {
+    fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64> {
+        assert!(
+            pc1.shape() == pc2.shape(),
+            "Input point clouds must have the same shape"
+        );
+        assert!(
+            pc1.shape()[1] == 3,
+            "Input point clouds must have 3 columns"
+        );
 
-        let id3 = Array2::eye(3);
-        for i in 0..pc1.dim().0 {
-            let weight = 1.0;
-            let mut mat_n = Array2::zeros((3, DIM));
-
-            mat_n
-                .slice_mut(s![.., 0..9])
-                .assign(&kron(&pc1.row(i).into_shape((1, 3)).unwrap(), &id3));
-            mat_n
-                .slice_mut(s![.., 9])
-                .assign(&pc2.row(i).t().mapv(|x| -1.0 * x));
-
-            let mat_m = mat_n.t().dot(&mat_n) * weight;
-
-            terms.push(Fractional {
-                f: F::new(mat_m.mapv(|x| self.c * self.c * x)),
-                h: H::new(mat_m.clone(), self.c),
-            });
-        }
-
-        terms
-    }
-
-    pub fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64> {
-        if pc1.dim().0 != pc2.dim().0 {
-            panic!("The number of samples in pc1 and pc2 must be the same.");
-        }
-
-        let terms = self.compute_terms(pc1, pc2);
+        let terms = compute_terms(pc1, pc2, &self.c);
 
         let init_rot = compute_initial_guess(pc1, pc2);
         let mut rot_vec = rot_mat_to_vec(&init_rot);
