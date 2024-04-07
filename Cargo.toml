@@ -2,6 +2,6 @@
 resolver = "2"
 
 members = [
-    "geman-mcclure-rotation-solver",
-    "geman-mcclure-rotation-solver-python"
+    "gm-solver",
+    "gm-solver-python"
 ]

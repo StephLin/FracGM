@@ -203,24 +203,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c"
 
 [[package]]
-name = "geman-mcclure-rotation-solver"
-version = "0.1.0"
-dependencies = [
- "ndarray",
- "ndarray-linalg",
- "osqp",
-]
-
-[[package]]
-name = "geman-mcclure-rotation-solver-python"
-version = "0.1.0"
-dependencies = [
- "geman-mcclure-rotation-solver",
- "numpy",
- "pyo3",
-]
-
-[[package]]
 name = "getrandom"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -229,6 +211,24 @@ dependencies = [
  "cfg-if",
  "libc",
  "wasi",
+]
+
+[[package]]
+name = "gm-solver"
+version = "0.1.0"
+dependencies = [
+ "ndarray",
+ "ndarray-linalg",
+ "osqp",
+]
+
+[[package]]
+name = "gm-solver-python"
+version = "0.1.0"
+dependencies = [
+ "gm-solver",
+ "numpy",
+ "pyo3",
 ]
 
 [[package]]

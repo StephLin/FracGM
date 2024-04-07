@@ -1,4 +1,6 @@
-# Geman-McClure Robust Rotation Estimation -- Rust Implementation
+# Geman-McClure Robust Estimation -- Rust Implementation
+
+Geman-McClure robust estimator for 3-D point cloud rotation / registration.
 
 ## Setup
 
@@ -27,10 +29,10 @@ python3 -m pip install numpy "maturin[patchelf]"
 
 ```bash
 # Develop within a virtualenv
-cd geman-mcclure-rotation-solver-python
+cd gm-solver-python
 maturin develop
 
 # Build
-cd geman-mcclure-rotation-solver-python
+cd gm-solver-python
 maturin build --release
 ```
