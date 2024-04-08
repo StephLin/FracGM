@@ -158,7 +158,6 @@ pub trait GemanMcclureLinearSolver {
 
         let init_mat = self.compute_initial_guess(pc1, pc2);
         let mut vec = self.mat_to_vec(&init_mat);
-        println!("Init vec: {:}", vec);
 
         let mut beta: Vec<f64> = terms
             .iter()
@@ -166,10 +165,7 @@ pub trait GemanMcclureLinearSolver {
             .collect();
         let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h.call(&vec)).collect();
 
-        println!("Init BETA: {:?}", beta);
-        println!("Init MU: {:?}", mu);
-
-        for c in 0..self.max_iteration() {
+        for _ in 0..self.max_iteration() {
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
             for i in 0..pc1.dim().0 {
                 mat_a = mat_a + mu[i] * &terms[i].f.mat - mu[i] * beta[i] * &terms[i].h.mat;
@@ -179,14 +175,11 @@ pub trait GemanMcclureLinearSolver {
 
             let psi_norm = self.compute_psi_norm(&vec, &beta, &mu, &terms);
             if psi_norm < self.tol() {
-                println!("Converged at iteration {:}", c);
                 break;
             }
 
             (beta, mu) = self.solve_beta_mu(&vec, &beta, &mu, &terms);
         }
-
-        println!("Final vec: {:}", vec);
 
         self.project(&self.vec_to_mat(&vec))
     }

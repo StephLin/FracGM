@@ -9,8 +9,13 @@ pub struct LinearRotationSolver(rotation::LinearSolver);
 #[pymethods]
 impl LinearRotationSolver {
     #[new]
-    fn new(max_iteration: usize, tol: f64, c: f64) -> Self {
-        LinearRotationSolver(rotation::LinearSolver::new(max_iteration, tol, c))
+    fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        LinearRotationSolver(rotation::LinearSolver::new(
+            max_iteration,
+            tol,
+            noise_bound,
+            c,
+        ))
     }
 
     unsafe fn solve<'py>(
@@ -21,15 +26,6 @@ impl LinearRotationSolver {
     ) -> Bound<'py, PyArray2<f64>> {
         let pc1 = pc1.as_array().to_owned();
         let pc2 = pc2.as_array().to_owned();
-
-        assert!(
-            pc1.shape() == pc2.shape(),
-            "Input point clouds must have the same shape"
-        );
-        assert!(
-            pc1.shape()[1] == 3,
-            "Input point clouds must have 3 columns"
-        );
 
         let rot = self.0.solve(&pc1, &pc2);
 
@@ -43,8 +39,13 @@ pub struct LinearRegistrationSolver(registration::LinearSolver);
 #[pymethods]
 impl LinearRegistrationSolver {
     #[new]
-    fn new(max_iteration: usize, tol: f64, c: f64) -> Self {
-        LinearRegistrationSolver(registration::LinearSolver::new(max_iteration, tol, c))
+    fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        LinearRegistrationSolver(registration::LinearSolver::new(
+            max_iteration,
+            tol,
+            noise_bound,
+            c,
+        ))
     }
 
     unsafe fn solve<'py>(
@@ -55,15 +56,6 @@ impl LinearRegistrationSolver {
     ) -> Bound<'py, PyArray2<f64>> {
         let pc1 = pc1.as_array().to_owned();
         let pc2 = pc2.as_array().to_owned();
-
-        assert!(
-            pc1.shape() == pc2.shape(),
-            "Input point clouds must have the same shape"
-        );
-        assert!(
-            pc1.shape()[1] == 3,
-            "Input point clouds must have 3 columns"
-        );
 
         let rot = self.0.solve(&pc1, &pc2);
 

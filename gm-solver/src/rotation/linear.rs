@@ -9,15 +9,22 @@ use crate::utils;
 pub struct LinearSolver {
     pub max_iteration: usize,
     pub tol: f64,
+    pub noise_bound: f64,
     pub c: f64,
 }
 
 impl LinearSolver {
-    pub fn new(max_iteration: usize, tol: f64, c: f64) -> LinearSolver {
+    pub fn new(
+        max_iteration: usize,
+        tol: f64,
+        noise_bound: Option<f64>,
+        c: Option<f64>,
+    ) -> LinearSolver {
         LinearSolver {
             max_iteration,
             tol,
-            c,
+            noise_bound: noise_bound.unwrap_or(0.1),
+            c: c.unwrap_or(1.0),
         }
     }
 }
@@ -62,7 +69,7 @@ impl GemanMcclureLinearSolver for LinearSolver {
                 .slice_mut(s![.., 9])
                 .assign(&pc2.row(i).t().mapv(|x| -1.0 * x));
 
-            let mat_m = mat_n.t().dot(&mat_n);
+            let mat_m = mat_n.t().dot(&mat_n) / (self.noise_bound * self.noise_bound);
 
             terms.push(Fractional {
                 f: F::new(mat_m.mapv(|x| self.c() * self.c() * x)),
