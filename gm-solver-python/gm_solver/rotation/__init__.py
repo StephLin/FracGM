@@ -1,1 +1,1 @@
-from ..gm_solver import LinearRotationSolver as LinearSolver
+from gm_solver.gm_solver import LinearRotationSolver as LinearSolver

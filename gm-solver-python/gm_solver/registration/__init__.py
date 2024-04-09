@@ -1,1 +1,1 @@
-from ..gm_solver import LinearRegistrationSolver as LinearSolver
+from gm_solver.gm_solver import LinearRegistrationSolver as LinearSolver
