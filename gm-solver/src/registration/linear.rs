@@ -3,7 +3,10 @@ use ndarray::prelude::*;
 use ndarray::Array2;
 
 use crate::registration::utils as reg_utils;
-use crate::solver::{Fractional, GemanMcclureLinearSolver, F, H};
+use crate::solver::{
+    Fractional, FractionalProgrammingMaterials, GemanMcclureSolver, GemanMcclureSolverDiagnostic,
+    F, H,
+};
 use crate::utils;
 
 pub struct LinearSolver {
@@ -14,13 +17,8 @@ pub struct LinearSolver {
 }
 
 impl LinearSolver {
-    pub fn new(
-        max_iteration: usize,
-        tol: f64,
-        noise_bound: Option<f64>,
-        c: Option<f64>,
-    ) -> LinearSolver {
-        LinearSolver {
+    pub fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        Self {
             max_iteration,
             tol,
             noise_bound: noise_bound.unwrap_or(0.1),
@@ -29,7 +27,7 @@ impl LinearSolver {
     }
 }
 
-impl GemanMcclureLinearSolver for LinearSolver {
+impl FractionalProgrammingMaterials for LinearSolver {
     fn dim(&self) -> usize {
         reg_utils::DIM
     }
@@ -99,3 +97,6 @@ impl GemanMcclureLinearSolver for LinearSolver {
         mat
     }
 }
+
+impl GemanMcclureSolver for LinearSolver {}
+impl GemanMcclureSolverDiagnostic for LinearSolver {}

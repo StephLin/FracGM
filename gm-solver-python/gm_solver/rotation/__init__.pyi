@@ -2,6 +2,8 @@ import typing as T
 
 import numpy.typing as npt
 
+from gm_solver import Diagnostic
+
 class LinearSolver:
     def __init__(
         self,
@@ -30,3 +32,15 @@ class LinearSolver:
         Returns:
             npt.ArrayLike: Rotation matrix.
         """
+
+    def solve_with_diagnostic(self, A: npt.ArrayLike, B: npt.ArrayLike) -> Diagnostic:
+        """Solve the registration problem given two point clouds and return diagnostic.
+
+        Args:
+            A (npt.ArrayLike): Pointcloud A.
+            B (npt.ArrayLike): Pointcloud B.
+
+        Returns:
+            Diagnostic: Solution with diagnostic.
+        """
+        ...

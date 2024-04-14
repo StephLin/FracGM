@@ -35,7 +35,7 @@ pub struct Fractional {
     pub h: H,
 }
 
-pub trait GemanMcclureLinearSolver {
+pub trait FractionalProgrammingMaterials {
     fn dim(&self) -> usize;
 
     fn max_iteration(&self) -> usize;
@@ -143,7 +143,9 @@ pub trait GemanMcclureLinearSolver {
 
         psi2.sqrt()
     }
+}
 
+pub trait GemanMcclureSolver: FractionalProgrammingMaterials {
     fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64> {
         assert!(
             pc1.shape() == pc2.shape(),
@@ -182,5 +184,101 @@ pub trait GemanMcclureLinearSolver {
         }
 
         self.project(&self.vec_to_mat(&vec))
+    }
+}
+
+#[derive(Clone)]
+pub struct IterationComponent {
+    pub alpha_vec: Array2<f64>,
+    pub alpha_mat: Array2<f64>,
+    pub alpha_proj: Array2<f64>,
+    pub beta: Vec<f64>,
+    pub mu: Vec<f64>,
+    pub psi_norm: f64,
+}
+
+#[derive(Clone)]
+pub struct Diagnostic {
+    pub iterations: Vec<IterationComponent>,
+    pub solution: Array2<f64>,
+    pub n_iters: usize,
+}
+
+pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
+    fn update_diagnostics(
+        &self,
+        alpha: &Array2<f64>,
+        beta: &Vec<f64>,
+        mu: &Vec<f64>,
+        terms: &Vec<Fractional>,
+        diagnostics: &mut Vec<IterationComponent>,
+    ) {
+        let psi_norm = self.compute_psi_norm(&alpha, &beta, &mu, &terms);
+
+        let component = IterationComponent {
+            alpha_vec: alpha.clone(),
+            alpha_mat: self.vec_to_mat(&alpha),
+            alpha_proj: self.project(&self.vec_to_mat(&alpha)),
+            beta: beta.clone(),
+            mu: mu.clone(),
+            psi_norm,
+        };
+
+        diagnostics.push(component);
+    }
+
+    fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Diagnostic {
+        assert!(
+            pc1.shape() == pc2.shape(),
+            "Input point clouds must have the same shape"
+        );
+        assert!(
+            pc1.shape()[1] == 3,
+            "Input point clouds must have 3 columns"
+        );
+
+        let mut iterations: Vec<IterationComponent> = Vec::new();
+
+        let terms = self.compute_terms(pc1, pc2);
+
+        let init_mat = self.compute_initial_guess(pc1, pc2);
+        let mut vec = self.mat_to_vec(&init_mat);
+
+        let mut beta: Vec<f64> = terms
+            .iter()
+            .map(|frac| frac.f.call(&vec) / frac.h.call(&vec))
+            .collect();
+        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h.call(&vec)).collect();
+
+        self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
+
+        let mut n_iters: usize = 0;
+        for _ in 0..self.max_iteration() {
+            n_iters += 1;
+
+            let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
+            for i in 0..pc1.dim().0 {
+                mat_a = mat_a + mu[i] * &terms[i].f.mat - mu[i] * beta[i] * &terms[i].h.mat;
+            }
+
+            vec = self.solve_alpha(&mat_a);
+
+            let psi_norm = self.compute_psi_norm(&vec, &beta, &mu, &terms);
+            if psi_norm < self.tol() {
+                break;
+            }
+
+            (beta, mu) = self.solve_beta_mu(&vec, &beta, &mu, &terms);
+
+            self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
+        }
+
+        self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
+
+        Diagnostic {
+            iterations,
+            solution: self.project(&self.vec_to_mat(&vec)),
+            n_iters,
+        }
     }
 }
