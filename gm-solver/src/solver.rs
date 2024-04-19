@@ -264,16 +264,13 @@ pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
             vec = self.solve_alpha(&mat_a);
 
             let psi_norm = self.compute_psi_norm(&vec, &beta, &mu, &terms);
+            self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
             if psi_norm < self.tol() {
                 break;
             }
 
             (beta, mu) = self.solve_beta_mu(&vec, &beta, &mu, &terms);
-
-            self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
         }
-
-        self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
 
         Diagnostic {
             iterations,
