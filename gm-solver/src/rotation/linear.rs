@@ -5,7 +5,7 @@ use ndarray::Array2;
 use crate::rotation::utils as rot_utils;
 use crate::solver::{
     Fractional, FractionalProgrammingMaterials, GemanMcclureSolver, GemanMcclureSolverDiagnostic,
-    F, H,
+    R2,
 };
 use crate::utils;
 
@@ -69,10 +69,7 @@ impl FractionalProgrammingMaterials for LinearSolver {
 
             let mat_m = mat_n.t().dot(&mat_n) / (self.noise_bound * self.noise_bound);
 
-            terms.push(Fractional {
-                f: F::new(mat_m.mapv(|x| self.c() * self.c() * x)),
-                h: H::new(mat_m.clone(), self.c()),
-            });
+            terms.push(Fractional::new(R2::new(mat_m), self.c()));
         }
 
         terms

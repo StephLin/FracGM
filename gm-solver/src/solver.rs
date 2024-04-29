@@ -1,14 +1,14 @@
 use ndarray::Array2;
 use osqp;
 
-pub struct F {
+pub struct R2 {
     pub mat: Array2<f64>,
     cache: f64,
 }
 
-impl F {
-    pub fn new(mat: Array2<f64>) -> F {
-        F { mat, cache: 0.0 }
+impl R2 {
+    pub fn new(mat: Array2<f64>) -> R2 {
+        R2 { mat, cache: 0.0 }
     }
 
     pub fn call(&self, x: &Array2<f64>) -> f64 {
@@ -19,28 +19,8 @@ impl F {
         self.cache = self.call(x);
     }
 
-    pub fn cache(&self) -> f64 {
-        self.cache
-    }
-}
-
-pub struct H {
-    pub mat: Array2<f64>,
-    c: f64,
-    cache: f64,
-}
-
-impl H {
-    pub fn new(mat: Array2<f64>, c: f64) -> H {
-        H { mat, c, cache: 0.0 }
-    }
-
-    pub fn call(&self, x: &Array2<f64>) -> f64 {
-        x.t().dot(&self.mat).dot(x)[[0, 0]] + self.c * self.c
-    }
-
-    pub fn update_cache(&mut self, x: &Array2<f64>) {
-        self.cache = self.call(x);
+    pub fn mat(&self) -> &Array2<f64> {
+        &self.mat
     }
 
     pub fn cache(&self) -> f64 {
@@ -49,8 +29,37 @@ impl H {
 }
 
 pub struct Fractional {
-    pub f: F,
-    pub h: H,
+    r2: R2,
+    c: f64,
+    f_mat: Array2<f64>,
+}
+
+impl Fractional {
+    pub fn new(r2: R2, c: f64) -> Fractional {
+        let f_mat = c * c * r2.mat();
+
+        Fractional { r2, c, f_mat }
+    }
+
+    pub fn update_cache(&mut self, x: &Array2<f64>) {
+        self.r2.update_cache(x);
+    }
+
+    pub fn f(&self) -> f64 {
+        self.c * self.c * self.r2.cache()
+    }
+
+    pub fn h(&self) -> f64 {
+        self.r2.cache() + self.c * self.c
+    }
+
+    pub fn f_mat(&self) -> &Array2<f64> {
+        &self.f_mat
+    }
+
+    pub fn h_mat(&self) -> &Array2<f64> {
+        self.r2.mat()
+    }
 }
 
 pub trait FractionalProgrammingMaterials {
@@ -124,8 +133,8 @@ pub trait FractionalProgrammingMaterials {
             .zip(terms.iter().zip(init_mu.iter()))
             .zip(beta.iter_mut().zip(mu.iter_mut()))
             .for_each(|((init_beta_, (term, init_mu_)), (beta_, mu_))| {
-                let f = term.f.cache();
-                let h = term.h.cache();
+                let f = term.f();
+                let h = term.h();
                 *beta_ = init_beta_ - 1.0 * (init_beta_ - f / h);
                 *mu_ = init_mu_ - 1.0 * (init_mu_ - 1.0 / h);
             });
@@ -140,8 +149,8 @@ pub trait FractionalProgrammingMaterials {
         beta.iter()
             .zip(terms.iter().zip(mu.iter()))
             .map(|(beta_, (term, mu_))| {
-                let f = term.f.cache();
-                let h = term.h.cache();
+                let f = term.f();
+                let h = term.h();
 
                 let a = -1.0 * f + beta_ * h;
                 let b = -1.0 + mu_ * h;
@@ -153,8 +162,7 @@ pub trait FractionalProgrammingMaterials {
 
     fn update_terms_cache(&self, terms: &mut Vec<Fractional>, alpha: &Array2<f64>) {
         for term in terms {
-            term.f.update_cache(&alpha);
-            term.h.update_cache(&alpha);
+            term.update_cache(&alpha);
         }
     }
 }
@@ -176,16 +184,13 @@ pub trait GemanMcclureSolver: FractionalProgrammingMaterials {
         let mut vec = self.mat_to_vec(&init_mat);
         self.update_terms_cache(&mut terms, &vec);
 
-        let mut beta: Vec<f64> = terms
-            .iter()
-            .map(|frac| frac.f.cache() / frac.h.cache())
-            .collect();
-        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h.cache()).collect();
+        let mut beta: Vec<f64> = terms.iter().map(|frac| frac.f() / frac.h()).collect();
+        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h()).collect();
 
         for _ in 0..self.max_iteration() {
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
             for i in 0..pc1.dim().0 {
-                mat_a = mat_a + mu[i] * &terms[i].f.mat - mu[i] * beta[i] * &terms[i].h.mat;
+                mat_a = mat_a + mu[i] * terms[i].f_mat() - mu[i] * beta[i] * terms[i].h_mat();
             }
 
             vec = self.solve_alpha(&mat_a);
@@ -261,11 +266,8 @@ pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
         let mut vec = self.mat_to_vec(&init_mat);
         self.update_terms_cache(&mut terms, &vec);
 
-        let mut beta: Vec<f64> = terms
-            .iter()
-            .map(|frac| frac.f.cache() / frac.h.cache())
-            .collect();
-        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h.cache()).collect();
+        let mut beta: Vec<f64> = terms.iter().map(|frac| frac.f() / frac.h()).collect();
+        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h()).collect();
 
         self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
 
@@ -275,7 +277,7 @@ pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
 
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
             for i in 0..pc1.dim().0 {
-                mat_a = mat_a + mu[i] * &terms[i].f.mat - mu[i] * beta[i] * &terms[i].h.mat;
+                mat_a = mat_a + mu[i] * terms[i].f_mat() - mu[i] * beta[i] * terms[i].h_mat();
             }
 
             vec = self.solve_alpha(&mat_a);
