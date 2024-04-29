@@ -65,7 +65,7 @@ impl FractionalProgrammingMaterials for LinearSolver {
                 .assign(&kron(&pc1.row(i).into_shape((1, 3)).unwrap(), &id3));
             mat_n
                 .slice_mut(s![.., 9])
-                .assign(&pc2.row(i).t().mapv(|x| -1.0 * x));
+                .assign(&pc2.row(i).mapv(|x| -1.0 * x));
 
             let mat_m = mat_n.t().dot(&mat_n) / (self.noise_bound * self.noise_bound);
 
