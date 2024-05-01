@@ -161,9 +161,7 @@ pub trait FractionalProgrammingMaterials {
     }
 
     fn update_terms_cache(&self, terms: &mut Vec<Fractional>, alpha: &Array2<f64>) {
-        for term in terms {
-            term.update_cache(&alpha);
-        }
+        terms.iter_mut().for_each(|term| term.update_cache(alpha));
     }
 }
 
