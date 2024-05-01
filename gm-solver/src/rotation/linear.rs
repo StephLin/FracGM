@@ -5,7 +5,7 @@ use ndarray::Array2;
 use crate::rotation::utils as rot_utils;
 use crate::solver::{
     Fractional, FractionalProgrammingMaterials, GemanMcclureSolver, GemanMcclureSolverDiagnostic,
-    R2,
+    R2Sym,
 };
 use crate::utils;
 
@@ -27,7 +27,7 @@ impl LinearSolver {
     }
 }
 
-impl FractionalProgrammingMaterials for LinearSolver {
+impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
     fn dim(&self) -> usize {
         rot_utils::DIM
     }
@@ -52,8 +52,8 @@ impl FractionalProgrammingMaterials for LinearSolver {
         utils::project(mat)
     }
 
-    fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional> {
-        let mut terms: Vec<Fractional> = Vec::new();
+    fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional<R2Sym>> {
+        let mut terms: Vec<Fractional<R2Sym>> = Vec::new();
         terms.reserve(pc1.dim().0);
 
         let id3 = Array2::eye(3);
@@ -69,7 +69,7 @@ impl FractionalProgrammingMaterials for LinearSolver {
 
             let mat_m = mat_n.t().dot(&mat_n) / (self.noise_bound * self.noise_bound);
 
-            terms.push(Fractional::new(R2::new(mat_m), self.c()));
+            terms.push(Fractional::new(R2Sym::new(mat_m), self.c()));
         }
 
         terms
@@ -83,5 +83,5 @@ impl FractionalProgrammingMaterials for LinearSolver {
     }
 }
 
-impl GemanMcclureSolver for LinearSolver {}
-impl GemanMcclureSolverDiagnostic for LinearSolver {}
+impl GemanMcclureSolver<R2Sym> for LinearSolver {}
+impl GemanMcclureSolverDiagnostic<R2Sym> for LinearSolver {}

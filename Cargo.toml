@@ -5,3 +5,6 @@ members = [
     "gm-solver",
     "gm-solver-python"
 ]
+
+# [profile.release]
+# debug = true

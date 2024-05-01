@@ -1,41 +1,68 @@
-use ndarray::Array2;
+use ndarray::{Array2, Zip};
 use osqp;
 
-pub struct R2 {
+pub trait R2 {
+    fn call(&self, x: &Array2<f64>) -> f64;
+    fn update_cache(&mut self, x: &Array2<f64>);
+
+    fn mat(&self) -> &Array2<f64>;
+    fn cache(&self) -> f64;
+}
+
+pub struct R2Sym {
     pub mat: Array2<f64>,
     cache: f64,
 }
 
-impl R2 {
-    pub fn new(mat: Array2<f64>) -> R2 {
-        R2 { mat, cache: 0.0 }
+impl R2Sym {
+    pub fn new(mat: Array2<f64>) -> R2Sym {
+        R2Sym { mat, cache: 0.0 }
+    }
+}
+
+impl R2 for R2Sym {
+    fn call(&self, x: &Array2<f64>) -> f64 {
+        let mut result_upper = 0.0;
+        let mut result_diag = 0.0;
+
+        x.iter().enumerate().for_each(|(i, &x_i)| {
+            self.mat
+                .index_axis(ndarray::Axis(0), i)
+                .iter()
+                .enumerate()
+                .for_each(|(j, &a_ij)| {
+                    if i == j {
+                        result_diag += x_i * a_ij * x_i;
+                    } else if i < j {
+                        result_upper += x_i * a_ij * x[[j, 0]];
+                    }
+                });
+        });
+
+        result_upper * 2.0 + result_diag
     }
 
-    pub fn call(&self, x: &Array2<f64>) -> f64 {
-        x.t().dot(&self.mat).dot(x)[[0, 0]]
-    }
-
-    pub fn update_cache(&mut self, x: &Array2<f64>) {
+    fn update_cache(&mut self, x: &Array2<f64>) {
         self.cache = self.call(x);
     }
 
-    pub fn mat(&self) -> &Array2<f64> {
+    fn mat(&self) -> &Array2<f64> {
         &self.mat
     }
 
-    pub fn cache(&self) -> f64 {
+    fn cache(&self) -> f64 {
         self.cache
     }
 }
 
-pub struct Fractional {
-    r2: R2,
+pub struct Fractional<R> {
+    r2: R,
     c: f64,
     f_mat: Array2<f64>,
 }
 
-impl Fractional {
-    pub fn new(r2: R2, c: f64) -> Fractional {
+impl<R: R2> Fractional<R> {
+    pub fn new(r2: R, c: f64) -> Fractional<R> {
         let f_mat = c * c * r2.mat();
 
         Fractional { r2, c, f_mat }
@@ -62,7 +89,7 @@ impl Fractional {
     }
 }
 
-pub trait FractionalProgrammingMaterials {
+pub trait FractionalProgrammingMaterials<R: R2> {
     fn dim(&self) -> usize;
 
     fn max_iteration(&self) -> usize;
@@ -73,7 +100,7 @@ pub trait FractionalProgrammingMaterials {
     fn vec_to_mat(&self, vec: &Array2<f64>) -> Array2<f64>;
     fn project(&self, mat: &Array2<f64>) -> Array2<f64>;
 
-    fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional>;
+    fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional<R>>;
     fn compute_initial_guess(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64>;
 
     fn solve_alpha(&self, mat: &Array2<f64>) -> Array2<f64> {
@@ -121,7 +148,7 @@ pub trait FractionalProgrammingMaterials {
         &self,
         init_beta: &Vec<f64>,
         init_mu: &Vec<f64>,
-        terms: &Vec<Fractional>,
+        terms: &Vec<Fractional<R>>,
     ) -> (Vec<f64>, Vec<f64>) {
         assert!(init_beta.len() == init_mu.len());
 
@@ -142,7 +169,7 @@ pub trait FractionalProgrammingMaterials {
         (beta, mu)
     }
 
-    fn compute_psi_norm(&self, beta: &Vec<f64>, mu: &Vec<f64>, terms: &Vec<Fractional>) -> f64 {
+    fn compute_psi_norm(&self, beta: &Vec<f64>, mu: &Vec<f64>, terms: &Vec<Fractional<R>>) -> f64 {
         assert!(beta.len() == mu.len());
         assert!(beta.len() == terms.len());
 
@@ -160,12 +187,12 @@ pub trait FractionalProgrammingMaterials {
             .sqrt()
     }
 
-    fn update_terms_cache(&self, terms: &mut Vec<Fractional>, alpha: &Array2<f64>) {
+    fn update_terms_cache(&self, terms: &mut Vec<Fractional<R>>, alpha: &Array2<f64>) {
         terms.iter_mut().for_each(|term| term.update_cache(alpha));
     }
 }
 
-pub trait GemanMcclureSolver: FractionalProgrammingMaterials {
+pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
     fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64> {
         assert!(
             pc1.shape() == pc2.shape(),
@@ -188,7 +215,14 @@ pub trait GemanMcclureSolver: FractionalProgrammingMaterials {
         for _ in 0..self.max_iteration() {
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
             for i in 0..pc1.dim().0 {
-                mat_a = mat_a + mu[i] * terms[i].f_mat() - mu[i] * beta[i] * terms[i].h_mat();
+                let mu_ = &mu[i];
+                let beta_ = &beta[i];
+                Zip::from(&mut mat_a)
+                    .and(terms[i].f_mat())
+                    .and(terms[i].h_mat())
+                    .for_each(|a, f, h| {
+                        *a += mu_ * f - mu_ * beta_ * h;
+                    });
             }
 
             vec = self.solve_alpha(&mat_a);
@@ -223,13 +257,13 @@ pub struct Diagnostic {
     pub n_iters: usize,
 }
 
-pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
+pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R> {
     fn update_diagnostics(
         &self,
         alpha: &Array2<f64>,
         beta: &Vec<f64>,
         mu: &Vec<f64>,
-        terms: &Vec<Fractional>,
+        terms: &Vec<Fractional<R>>,
         diagnostics: &mut Vec<IterationComponent>,
     ) {
         let psi_norm = self.compute_psi_norm(&beta, &mu, &terms);
@@ -275,7 +309,14 @@ pub trait GemanMcclureSolverDiagnostic: FractionalProgrammingMaterials {
 
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
             for i in 0..pc1.dim().0 {
-                mat_a = mat_a + mu[i] * terms[i].f_mat() - mu[i] * beta[i] * terms[i].h_mat();
+                let mu_ = &mu[i];
+                let beta_ = &beta[i];
+                Zip::from(&mut mat_a)
+                    .and(terms[i].f_mat())
+                    .and(terms[i].h_mat())
+                    .for_each(|a, f, h| {
+                        *a += mu_ * f - mu_ * beta_ * h;
+                    });
             }
 
             vec = self.solve_alpha(&mat_a);
