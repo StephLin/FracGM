@@ -103,7 +103,7 @@ pub trait FractionalProgrammingMaterials<R: R2> {
     fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional<R>>;
     fn compute_initial_guess(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64>;
 
-    fn solve_alpha(&self, mat: &Array2<f64>) -> Array2<f64> {
+    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64> {
         assert!(mat.dim().0 == mat.dim().1);
         assert!(mat.dim().0 == self.dim());
 
@@ -225,7 +225,7 @@ pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
                     });
             }
 
-            vec = self.solve_alpha(&mat_a);
+            vec = self.solve_x(&mat_a);
             self.update_terms_cache(&mut terms, &vec);
 
             let psi_norm = self.compute_psi_norm(&beta, &mu, &terms);
@@ -319,7 +319,7 @@ pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R>
                     });
             }
 
-            vec = self.solve_alpha(&mat_a);
+            vec = self.solve_x(&mat_a);
             self.update_terms_cache(&mut terms, &vec);
 
             let psi_norm = self.compute_psi_norm(&beta, &mu, &terms);
