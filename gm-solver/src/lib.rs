@@ -1,4 +1,5 @@
-pub mod solver;
-pub mod utils;
-pub mod rotation;
 pub mod registration;
+pub mod rotation;
+pub mod solver;
+pub mod translation;
+pub mod utils;

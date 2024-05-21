@@ -166,6 +166,54 @@ impl LinearRegistrationSolver {
     }
 }
 
+#[pyclass]
+#[derive(Clone)]
+pub enum TIMPolicy {
+    CHAIN,
+    COMPLETE,
+}
+
+#[pyclass]
+pub struct DecoupledRegistrationSolver(registration::decoupled::Solver);
+
+#[pymethods]
+impl DecoupledRegistrationSolver {
+    #[new]
+    fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        DecoupledRegistrationSolver(registration::decoupled::Solver::new(
+            max_iteration,
+            tol,
+            noise_bound,
+            c,
+        ))
+    }
+
+    unsafe fn set_tim_policy<'py>(&mut self, tim_policy: TIMPolicy) {
+        match tim_policy {
+            TIMPolicy::CHAIN => self
+                .0
+                .set_tim_policy(registration::decoupled::TIMPolicy::CHAIN),
+            TIMPolicy::COMPLETE => self
+                .0
+                .set_tim_policy(registration::decoupled::TIMPolicy::COMPLETE),
+        }
+    }
+
+    unsafe fn solve<'py>(
+        &self,
+        py: Python<'py>,
+        pc1: PyReadonlyArray2<'py, f64>,
+        pc2: PyReadonlyArray2<'py, f64>,
+    ) -> Bound<'py, PyArray2<f64>> {
+        let pc1 = pc1.as_array().to_owned();
+        let pc2 = pc2.as_array().to_owned();
+
+        let mat = self.0.solve(&pc1, &pc2);
+
+        mat.into_pyarray_bound(py)
+    }
+}
+
 #[pymodule]
 #[pyo3(name = "gm_solver")]
 mod py_module {
@@ -182,4 +230,10 @@ mod py_module {
 
     #[pymodule_export]
     use LinearRegistrationSolver;
+
+    #[pymodule_export]
+    use TIMPolicy;
+
+    #[pymodule_export]
+    use DecoupledRegistrationSolver;
 }

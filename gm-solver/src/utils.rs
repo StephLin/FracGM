@@ -35,3 +35,32 @@ pub fn get_zero_mean_point_cloud(pc: &Array2<f64>) -> (Array2<f64>, Array1<f64>)
 
     (c_pc, mean)
 }
+
+pub fn compute_complete_translation_invariant_measurements(pc: &Array2<f64>) -> Array2<f64> {
+    let n_tims = pc.dim().0 * (pc.dim().0 - 1) / 2;
+    let mut tims = Array2::<f64>::zeros((n_tims, 3));
+
+    let mut idx = 0;
+    for i in 0..pc.dim().0 {
+        for j in (i + 1)..pc.dim().0 {
+            let diff = &pc.row(i) - &pc.row(j);
+            tims.row_mut(idx).assign(&diff);
+            idx += 1;
+        }
+    }
+
+    tims
+}
+
+pub fn compute_chain_translation_invariant_measurements(pc: &Array2<f64>) -> Array2<f64> {
+    let n_tims = pc.dim().0;
+    let mut tims = Array2::<f64>::zeros((n_tims, 3));
+
+    for i in 0..pc.dim().0 {
+        let j = if i == pc.dim().0 - 1 { 0 } else { i + 1 };
+        let diff = &pc.row(i) - &pc.row(j);
+        tims.row_mut(i).assign(&diff);
+    }
+
+    tims
+}
