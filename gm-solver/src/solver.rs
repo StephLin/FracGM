@@ -144,27 +144,9 @@ pub trait FractionalProgrammingMaterials<R: R2> {
         x
     }
 
-    fn solve_beta_mu(
-        &self,
-        init_beta: &Vec<f64>,
-        init_mu: &Vec<f64>,
-        terms: &Vec<Fractional<R>>,
-    ) -> (Vec<f64>, Vec<f64>) {
-        assert!(init_beta.len() == init_mu.len());
-
-        let mut beta = init_beta.clone();
-        let mut mu = init_mu.clone();
-
-        init_beta
-            .iter()
-            .zip(terms.iter().zip(init_mu.iter()))
-            .zip(beta.iter_mut().zip(mu.iter_mut()))
-            .for_each(|((init_beta_, (term, init_mu_)), (beta_, mu_))| {
-                let f = term.f();
-                let h = term.h();
-                *beta_ = init_beta_ - 1.0 * (init_beta_ - f / h);
-                *mu_ = init_mu_ - 1.0 * (init_mu_ - 1.0 / h);
-            });
+    fn solve_beta_mu(&self, terms: &Vec<Fractional<R>>) -> (Vec<f64>, Vec<f64>) {
+        let beta = terms.iter().map(|term| term.f() / term.h()).collect();
+        let mu = terms.iter().map(|term| 1.0 / term.h()).collect();
 
         (beta, mu)
     }
@@ -209,8 +191,7 @@ pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
         let mut vec = self.mat_to_vec(&init_mat);
         self.update_terms_cache(&mut terms, &vec);
 
-        let mut beta: Vec<f64> = terms.iter().map(|frac| frac.f() / frac.h()).collect();
-        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h()).collect();
+        let (mut beta, mut mu) = self.solve_beta_mu(&terms);
 
         for _ in 0..self.max_iteration() {
             let mut mat_a = Array2::<f64>::zeros((self.dim(), self.dim()));
@@ -233,7 +214,7 @@ pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
                 break;
             }
 
-            (beta, mu) = self.solve_beta_mu(&beta, &mu, &terms);
+            (beta, mu) = self.solve_beta_mu(&terms);
         }
 
         self.project(&self.vec_to_mat(&vec))
@@ -298,8 +279,7 @@ pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R>
         let mut vec = self.mat_to_vec(&init_mat);
         self.update_terms_cache(&mut terms, &vec);
 
-        let mut beta: Vec<f64> = terms.iter().map(|frac| frac.f() / frac.h()).collect();
-        let mut mu: Vec<f64> = terms.iter().map(|frac| 1.0 / frac.h()).collect();
+        let (mut beta, mut mu) = self.solve_beta_mu(&terms);
 
         self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
 
@@ -328,7 +308,7 @@ pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R>
                 break;
             }
 
-            (beta, mu) = self.solve_beta_mu(&beta, &mu, &terms);
+            (beta, mu) = self.solve_beta_mu(&terms);
         }
 
         Diagnostic {
