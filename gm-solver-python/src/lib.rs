@@ -4,6 +4,7 @@ use pyo3::{pyclass, pymethods, pymodule, Bound, PyResult, Python};
 use gm_solver::{
     registration, rotation,
     solver::{self, GemanMcclureSolver, GemanMcclureSolverDiagnostic},
+    translation,
 };
 
 #[pyclass]
@@ -167,6 +168,49 @@ impl LinearRegistrationSolver {
 }
 
 #[pyclass]
+pub struct LinearTranslationSolver(translation::LinearSolver);
+
+#[pymethods]
+impl LinearTranslationSolver {
+    #[new]
+    fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        LinearTranslationSolver(translation::LinearSolver::new(
+            max_iteration,
+            tol,
+            noise_bound,
+            c,
+        ))
+    }
+
+    unsafe fn solve<'py>(
+        &self,
+        py: Python<'py>,
+        pc1: PyReadonlyArray2<'py, f64>,
+        pc2: PyReadonlyArray2<'py, f64>,
+    ) -> Bound<'py, PyArray2<f64>> {
+        let pc1 = pc1.as_array().to_owned();
+        let pc2 = pc2.as_array().to_owned();
+
+        let mat = GemanMcclureSolver::solve(&self.0, &pc1, &pc2);
+
+        mat.into_pyarray_bound(py)
+    }
+
+    unsafe fn solve_with_diagnostic<'py>(
+        &self,
+        pc1: PyReadonlyArray2<'py, f64>,
+        pc2: PyReadonlyArray2<'py, f64>,
+    ) -> Diagnostic {
+        let pc1 = pc1.as_array().to_owned();
+        let pc2 = pc2.as_array().to_owned();
+
+        let diagnostic = GemanMcclureSolverDiagnostic::solve(&self.0, &pc1, &pc2);
+
+        Diagnostic::from(&diagnostic)
+    }
+}
+
+#[pyclass]
 #[derive(Clone)]
 pub enum TIMPolicy {
     CHAIN,
@@ -230,6 +274,9 @@ mod py_module {
 
     #[pymodule_export]
     use LinearRegistrationSolver;
+
+    #[pymodule_export]
+    use LinearTranslationSolver;
 
     #[pymodule_export]
     use TIMPolicy;
