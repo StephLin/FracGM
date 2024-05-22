@@ -46,6 +46,7 @@ impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
     fn mat_to_vec(&self, mat: &Array2<f64>) -> Array2<f64> {
         let mut vec = Array2::<f64>::zeros((trans_utils::DIM, 1));
         vec.slice_mut(s![0..3, ..]).assign(mat);
+        vec[[3, 0]] = 1.0;
 
         vec
     }
