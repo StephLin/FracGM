@@ -34,12 +34,6 @@ impl Solver {
 
 impl Solver {
     pub fn solve(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64> {
-        println!(
-            "Compute TIMs for pc1 and pc2 (size: {} and {})",
-            pc1.shape()[0],
-            pc2.shape()[0]
-        );
-
         let pc1_tims = match self.tim_policy {
             TIMPolicy::CHAIN => utils::compute_chain_translation_invariant_measurements(pc1),
             TIMPolicy::COMPLETE => utils::compute_complete_translation_invariant_measurements(pc1),
@@ -48,8 +42,6 @@ impl Solver {
             TIMPolicy::CHAIN => utils::compute_chain_translation_invariant_measurements(pc2),
             TIMPolicy::COMPLETE => utils::compute_complete_translation_invariant_measurements(pc2),
         };
-
-        println!("DONE");
 
         let rot = self.rotation_solver.solve(&pc1_tims, &pc2_tims);
 
