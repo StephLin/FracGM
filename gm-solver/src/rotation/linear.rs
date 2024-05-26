@@ -1,6 +1,7 @@
 use ndarray::linalg::kron;
 use ndarray::prelude::*;
 use ndarray::Array2;
+use ndarray_linalg::*;
 
 use crate::rotation::utils as rot_utils;
 use crate::solver::{
@@ -80,6 +81,23 @@ impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
         let (pc2, _) = &utils::get_zero_mean_point_cloud(pc2);
 
         utils::project(&pc1.t().dot(pc2))
+    }
+
+    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64> {
+        let e = array![0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+
+        let lu_factor = mat.clone().factorize_into().unwrap();
+
+        let y = lu_factor
+            .solve_into(e)
+            .unwrap()
+            .into_shape((10, 1))
+            .unwrap();
+        let schur = y[[9, 0]];
+
+        let x = (1.0 / schur) * y;
+
+        x
     }
 }
 

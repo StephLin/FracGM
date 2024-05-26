@@ -1,5 +1,6 @@
 use ndarray::prelude::*;
 use ndarray::Array2;
+use ndarray_linalg::*;
 
 use crate::solver::{
     Fractional, FractionalProgrammingMaterials, GemanMcclureSolver, GemanMcclureSolverDiagnostic,
@@ -92,6 +93,19 @@ impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
         trans.slice_mut(s![.., 0]).assign(&(mean2 - mean1));
 
         trans
+    }
+
+    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64> {
+        let e = array![0.0, 0.0, 0.0, 1.0];
+
+        let lu_factor = mat.clone().factorize_into().unwrap();
+
+        let y = lu_factor.solve_into(e).unwrap().into_shape((4, 1)).unwrap();
+        let schur = y[[3, 0]];
+
+        let x = (1.0 / schur) * y;
+
+        x
     }
 }
 

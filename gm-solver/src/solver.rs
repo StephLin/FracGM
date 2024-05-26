@@ -1,5 +1,4 @@
 use ndarray::{Array2, Zip};
-use osqp;
 
 pub trait R2 {
     fn call(&self, x: &Array2<f64>) -> f64;
@@ -89,6 +88,10 @@ impl<R: R2> Fractional<R> {
     }
 }
 
+trait ConvexSolver {
+    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64>;
+}
+
 pub trait FractionalProgrammingMaterials<R: R2> {
     fn dim(&self) -> usize;
 
@@ -103,46 +106,7 @@ pub trait FractionalProgrammingMaterials<R: R2> {
     fn compute_terms(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Vec<Fractional<R>>;
     fn compute_initial_guess(&self, pc1: &Array2<f64>, pc2: &Array2<f64>) -> Array2<f64>;
 
-    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64> {
-        assert!(mat.dim().0 == mat.dim().1);
-        assert!(mat.dim().0 == self.dim());
-
-        let mut mat_p = vec![vec![0.0; self.dim()]; self.dim()];
-
-        for i in 0..mat.dim().0 {
-            for j in 0..mat.dim().1 {
-                mat_p[i][j] = mat[[i, j]];
-            }
-        }
-
-        let q = vec![0.0; self.dim()];
-
-        let mut mat_a = vec![vec![0.0; self.dim()]; 1];
-        mat_a[0][self.dim() - 1] = 1.0;
-        let l = [1.0; 1];
-        let u = [1.0; 1];
-
-        let mut problem = osqp::Problem::new(
-            osqp::CscMatrix::from(&mat_p).into_upper_tri(),
-            &q,
-            &mat_a,
-            &l,
-            &u,
-            &osqp::Settings::default().verbose(false),
-        )
-        .unwrap();
-
-        let result = problem.solve();
-
-        let x_ = result.x().unwrap();
-
-        let mut x = Array2::<f64>::zeros((self.dim(), 1));
-        for i in 0..self.dim() {
-            x[[i, 0]] = x_[i];
-        }
-
-        x
-    }
+    fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64>;
 
     fn solve_beta_mu(&self, terms: &Vec<Fractional<R>>) -> (Vec<f64>, Vec<f64>) {
         let beta = terms.iter().map(|term| term.f() / term.h()).collect();
