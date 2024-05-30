@@ -20,9 +20,18 @@ pub struct Solver {
 
 impl Solver {
     pub fn new(max_iteration: usize, tol: f64, noise_bound: Option<f64>, c: Option<f64>) -> Self {
+        let translation_solver = TranslationSolver::new(max_iteration, tol, noise_bound, c);
+
+        let rotation_solver = RotationSolver::new(
+            max_iteration,
+            tol,
+            Some(translation_solver.noise_bound * 2.0),
+            c,
+        );
+
         Self {
-            rotation_solver: RotationSolver::new(max_iteration, tol, noise_bound, c),
-            translation_solver: TranslationSolver::new(max_iteration, tol, noise_bound, c),
+            rotation_solver,
+            translation_solver,
             tim_policy: TIMPolicy::CHAIN,
         }
     }
