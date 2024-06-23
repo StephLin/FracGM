@@ -80,7 +80,7 @@ impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
         let (pc1, _) = &utils::get_zero_mean_point_cloud(pc1);
         let (pc2, _) = &utils::get_zero_mean_point_cloud(pc2);
 
-        utils::project(&pc1.t().dot(pc2))
+        utils::project(&pc2.t().dot(pc1))
     }
 
     fn solve_x(&self, mat: &Array2<f64>) -> Array2<f64> {

@@ -89,7 +89,7 @@ impl FractionalProgrammingMaterials<R2Sym> for LinearSolver {
         let mut mat = Array2::eye(4);
 
         mat.slice_mut(s![0..3, 0..3])
-            .assign(&utils::project(&pc1.t().dot(pc2)));
+            .assign(&utils::project(&pc2.t().dot(pc1)));
         mat.slice_mut(s![0..3, 3]).assign(&(mean2 - mean1));
 
         mat
