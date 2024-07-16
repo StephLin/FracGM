@@ -2,9 +2,9 @@ import typing as T
 
 import numpy.typing as npt
 
-from gm_solver import Diagnostic
+from fracgm import Diagnostic
 
-class LinearSolver:
+class LinearTranslationSolver:
     def __init__(
         self,
         max_iter: int,

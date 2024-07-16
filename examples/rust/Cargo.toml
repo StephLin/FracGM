@@ -1,5 +1,5 @@
 [package]
-name = "gm-solver"
+name = "example-fracgm-rust-project"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 ndarray = "0.15.6"
-ndarray-linalg = { version = "0.16.0", features = ["openblas-system"] }
+fracgm = { path = "../../fracgm" }

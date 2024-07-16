@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "gm-solver",
-    "gm-solver-python"
+members = [ "examples/rust",
+    "fracgm", "fracgm-cxx",
+    "fracgm-python"
 ]
 
 # [profile.release]

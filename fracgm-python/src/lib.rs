@@ -1,7 +1,7 @@
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use pyo3::{pyclass, pymethods, pymodule, Bound, PyResult, Python};
 
-use gm_solver::{
+use fracgm::{
     registration, rotation,
     solver::{self, GemanMcclureSolver, GemanMcclureSolverDiagnostic},
     translation,
@@ -259,7 +259,7 @@ impl DecoupledRegistrationSolver {
 }
 
 #[pymodule]
-#[pyo3(name = "gm_solver")]
+#[pyo3(name = "fracgm")]
 mod py_module {
     use super::*;
 
