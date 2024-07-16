@@ -1,10 +1,6 @@
-# C++ Example for FracGM Solvers
+# Rust Example for FracGM Solvers
 
-This example shows how to use FracGM solver in C++.
-
-You should prepare [Meson](https://mesonbuild.com/) build tool and
-[Eigen](https://eigen.tuxfamily.org/) C++ linear algebra library to compile this
-example.
+This example shows how to use FracGM solver in Rust.
 
 ## :gear: Build
 

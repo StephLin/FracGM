@@ -13,7 +13,7 @@ wrapper.
 
 - [FracGM](#fracgm)
   - [:gear: Setup](#gear-setup)
-  - [:seeding: Example Usage](#seeding-example-usage)
+  - [:seedling: Example Usage](#seedling-example-usage)
 
 ## :gear: Setup
 
@@ -41,7 +41,7 @@ python3 -m pip install meson ninjs
 python3 -m pip install numpy "maturin[patchelf]"
 ```
 
-## :seeding: Example Usage
+## :seedling: Example Usage
 
 - [Rust](examples/rust)
 - [C++](examples/cpp)
