@@ -3,9 +3,9 @@ from enum import Enum
 
 import numpy.typing as npt
 
-from gm_solver import Diagnostic
+from fracgm import Diagnostic
 
-class LinearSolver:
+class LinearRegistrationSolver:
     def __init__(
         self,
         max_iter: int,
@@ -50,7 +50,7 @@ class TIMPolicy(Enum):
     COMPLETE = 0
     CHAIN = 1
 
-class DecoupledSolver:
+class DecoupledRegistrationSolver:
     def __init__(
         self,
         max_iter: int,

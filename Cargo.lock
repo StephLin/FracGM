@@ -136,6 +136,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-fracgm-rust-project"
+version = "0.1.0"
+dependencies = [
+ "fracgm",
+ "ndarray",
+]
+
+[[package]]
 name = "fastrand"
 version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -188,6 +196,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "fracgm"
+version = "0.1.0"
+dependencies = [
+ "ndarray",
+ "ndarray-linalg",
+]
+
+[[package]]
+name = "fracgm-cxx"
+version = "0.1.0"
+dependencies = [
+ "fracgm",
+ "libc",
+ "ndarray",
+]
+
+[[package]]
+name = "fracgm-python"
+version = "0.1.0"
+dependencies = [
+ "fracgm",
+ "numpy",
+ "pyo3",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -196,23 +230,6 @@ dependencies = [
  "cfg-if",
  "libc",
  "wasi",
-]
-
-[[package]]
-name = "gm-solver"
-version = "0.1.0"
-dependencies = [
- "ndarray",
- "ndarray-linalg",
-]
-
-[[package]]
-name = "gm-solver-python"
-version = "0.1.0"
-dependencies = [
- "gm-solver",
- "numpy",
- "pyo3",
 ]
 
 [[package]]
@@ -279,9 +296,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.153"
+version = "0.2.155"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
+checksum = "97b3888a4aecf77e811145cadf6eef5901f4782c53886191b2f693f24761847c"
 
 [[package]]
 name = "libredox"

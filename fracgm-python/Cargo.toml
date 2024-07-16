@@ -1,14 +1,14 @@
 [package]
-name = "gm-solver-python"
+name = "fracgm-python"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "gm_solver"
+name = "fracgm"
 crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.21.1", features = ["experimental-declarative-modules"] }
 numpy = "0.21.0"
-gm-solver = { path = "../gm-solver" }
+fracgm = { path = "../fracgm" }
