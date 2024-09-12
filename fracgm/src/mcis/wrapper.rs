@@ -6,12 +6,12 @@ use num_cpus;
 use crate::mcis::array_helper;
 
 #[repr(C)]
-pub struct CIntBuffer {
+pub struct CBufferI32 {
     pub data: *mut libc::c_int,
     pub len: libc::size_t,
 }
 
-fn to_i32_vec(buf: &CIntBuffer) -> Vec<i32> {
+fn to_i32_vec(buf: &CBufferI32) -> Vec<i32> {
     if buf.len == 0 {
         vec![]
     } else {
@@ -24,7 +24,7 @@ fn to_i32_vec(buf: &CIntBuffer) -> Vec<i32> {
 
 #[link(name = "mcis", kind = "static")]
 extern "C" {
-    fn free_c_int_buffer(buf: CIntBuffer);
+    fn free_c_int_buffer(buf: CBufferI32);
 
     fn inlier_selection(
         src_array: *mut libc::c_double,
@@ -34,7 +34,7 @@ extern "C" {
         noise_bound: libc::c_double,
         pmc_timeout: libc::c_double,
         pmc_n_threads: libc::c_int,
-    ) -> CIntBuffer;
+    ) -> CBufferI32;
 }
 
 pub fn max_clique_inlier_selection(
@@ -45,8 +45,8 @@ pub fn max_clique_inlier_selection(
 ) -> Vec<usize> {
     let pmc_n_threads = num_cpus::get() as i32;
 
-    let src = array_helper::to_buffer(pc1);
-    let dst = array_helper::to_buffer(pc2);
+    let src = array_helper::to_f64_buf(pc1);
+    let dst = array_helper::to_f64_buf(pc2);
 
     unsafe {
         let buf = inlier_selection(
@@ -61,8 +61,8 @@ pub fn max_clique_inlier_selection(
 
         let result = to_i32_vec(&buf);
 
-        array_helper::free_buf(src);
-        array_helper::free_buf(dst);
+        array_helper::free_f64_buf(src);
+        array_helper::free_f64_buf(dst);
         free_c_int_buffer(buf);
 
         result.into_iter().map(|x| x as usize).collect()

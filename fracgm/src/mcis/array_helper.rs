@@ -21,12 +21,12 @@ pub fn to_array2(
 }
 
 #[repr(C)]
-pub struct CBuffer {
+pub struct CBufferF64 {
     pub data: *mut f64,
     pub len: usize,
 }
 
-pub fn to_buffer(arr: &Array2<f64>) -> CBuffer {
+pub fn to_f64_buf(arr: &Array2<f64>) -> CBufferF64 {
     let mut vec: Vec<f64> = Vec::new();
     for i in 0..arr.nrows() {
         for j in 0..arr.ncols() {
@@ -38,11 +38,10 @@ pub fn to_buffer(arr: &Array2<f64>) -> CBuffer {
     let data = buf.as_mut_ptr();
     let len = buf.len();
     std::mem::forget(buf);
-    CBuffer { data, len }
+    CBufferF64 { data, len }
 }
 
-#[no_mangle]
-pub extern "C" fn free_buf(buf: CBuffer) {
+pub fn free_f64_buf(buf: CBufferF64) {
     let s = unsafe { std::slice::from_raw_parts_mut(buf.data, buf.len) };
     let s = s.as_mut_ptr();
     let _ = unsafe { Box::from_raw(s) };

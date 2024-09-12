@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 ndarray = "0.15.6"
-fracgm = { path = "../../fracgm" }
+fracgm = { path = "../../fracgm", features = ["mcis"] }

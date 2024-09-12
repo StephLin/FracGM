@@ -21,12 +21,18 @@ pub fn to_array2(
 }
 
 #[repr(C)]
-pub struct CBuffer {
+pub struct CBufferF64 {
     pub data: *mut f64,
     pub len: usize,
 }
 
-pub fn to_buffer(arr: &Array2<f64>) -> CBuffer {
+#[repr(C)]
+pub struct CBufferUSize {
+    pub data: *mut usize,
+    pub len: usize,
+}
+
+pub fn to_f64_buf(arr: &Array2<f64>) -> CBufferF64 {
     let mut vec: Vec<f64> = Vec::new();
     for i in 0..arr.nrows() {
         for j in 0..arr.ncols() {
@@ -38,11 +44,26 @@ pub fn to_buffer(arr: &Array2<f64>) -> CBuffer {
     let data = buf.as_mut_ptr();
     let len = buf.len();
     std::mem::forget(buf);
-    CBuffer { data, len }
+    CBufferF64 { data, len }
+}
+
+pub fn to_usize_buf(arr: &[usize]) -> CBufferUSize {
+    let mut buf = arr.to_vec().into_boxed_slice();
+    let data = buf.as_mut_ptr();
+    let len = buf.len();
+    std::mem::forget(buf);
+    CBufferUSize { data, len }
 }
 
 #[no_mangle]
-pub extern "C" fn free_buf(buf: CBuffer) {
+pub extern "C" fn free_f64_buf(buf: CBufferF64) {
+    let s = unsafe { std::slice::from_raw_parts_mut(buf.data, buf.len) };
+    let s = s.as_mut_ptr();
+    let _ = unsafe { Box::from_raw(s) };
+}
+
+#[no_mangle]
+pub extern "C" fn free_usize_buf(buf: CBufferUSize) {
     let s = unsafe { std::slice::from_raw_parts_mut(buf.data, buf.len) };
     let s = s.as_mut_ptr();
     let _ = unsafe { Box::from_raw(s) };

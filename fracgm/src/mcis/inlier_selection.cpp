@@ -115,7 +115,7 @@ std::vector<int> inlier_selection_impl(const Eigen::Matrix<double, 3, Eigen::Dyn
 }
 
 extern "C" {
-CIntBuffer inlier_selection(double* src_array, size_t src_array_len, double* dst_array, size_t dst_array_len,
+CBufferI32 inlier_selection(double* src_array, size_t src_array_len, double* dst_array, size_t dst_array_len,
                             double noise_bound, double pmc_timeout, int pmc_n_threads) {
   auto src = to_eigen_pc(src_array, src_array_len / 3);
   auto dst = to_eigen_pc(dst_array, dst_array_len / 3);

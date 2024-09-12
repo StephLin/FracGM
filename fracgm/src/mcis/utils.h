@@ -4,13 +4,13 @@
 
 Eigen::Matrix3Xd to_eigen_pc(double *data, int n_cols) { return Eigen::Map<Eigen::Matrix3Xd>(data, 3, n_cols); }
 
-struct CIntBuffer {
+struct CBufferI32 {
   int *data;
   size_t len;
 };
 
-CIntBuffer to_c_int_buffer(const std::vector<int> &array) {
-  CIntBuffer buf;
+CBufferI32 to_c_int_buffer(const std::vector<int> &array) {
+  CBufferI32 buf;
 
   int len = static_cast<int>(array.size());
 
@@ -25,7 +25,7 @@ CIntBuffer to_c_int_buffer(const std::vector<int> &array) {
 }
 
 extern "C" {
-void free_c_int_buffer(CIntBuffer buf) {
+void free_c_int_buffer(CBufferI32 buf) {
   if (buf.data) delete[] buf.data;
 }
 }
