@@ -86,3 +86,20 @@ class DecoupledRegistrationSolver:
         Returns:
             npt.ArrayLike: SE(3) matrix.
         """
+
+def max_clique_inlier_selection(
+    A: npt.ArrayLike, B: npt.ArrayLike, noise_bound: float, pmc_timeout: float
+) -> npt.ArrayLike:
+    """
+    Find inlier correspondences using the Maximum clique inlier selection (MCIS) algorithm.
+
+    Args:
+        A (npt.ArrayLike): Pointcloud A.
+        B (npt.ArrayLike): Pointcloud B.
+        noise_bound (float): Noise bound of the data.
+        pmc_timeout (float): Timeout for the PMC solver in seconds.
+
+    Returns:
+        npt.ArrayLike: SE(3) matrix.
+    """
+    ...

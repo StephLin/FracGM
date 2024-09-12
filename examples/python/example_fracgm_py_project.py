@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from fracgm.registration import LinearRegistrationSolver
+from fracgm.registration import LinearRegistrationSolver, max_clique_inlier_selection
 from fracgm.rotation import LinearRotationSolver
 
 ROOT = Path(__file__).parent.absolute()
@@ -15,6 +15,9 @@ FRACGM_C = 1.0
 FRACGM_TOL = 1e-6
 FRACGM_MAX_ITERATION = 100
 FRACGM_NOISE_BOUND = 0.1
+FRACGM_PMC_TIMEOUT = 3600.0
+
+ENABLE_MAX_CLIQUE_INLIER_SELECTION = True
 
 
 def get_rotation_test_data():
@@ -42,6 +45,11 @@ def get_registration_test_data():
     return src, dst, gt
 
 
+def perform_max_clique_inlier_selection(src, dst, noise_bound, pmc_timeout):
+    indices = max_clique_inlier_selection(src, dst, noise_bound, pmc_timeout)
+    return np.take(src, indices, axis=0), np.take(dst, indices, axis=0)
+
+
 def main():
     print("[[ Example for FracGM-based rotation solver ]]", end="\n\n")
     src_rot, dst_rot, gt_rot = get_rotation_test_data()
@@ -55,6 +63,11 @@ def main():
 
     print("[[ Example for FracGM-based registration solver ]]", end="\n\n")
     src_reg, dst_reg, gt_reg = get_registration_test_data()
+
+    if ENABLE_MAX_CLIQUE_INLIER_SELECTION:
+        src_reg, dst_reg = perform_max_clique_inlier_selection(
+            src_reg, dst_reg, FRACGM_NOISE_BOUND, FRACGM_PMC_TIMEOUT
+        )
 
     est_reg = LinearRegistrationSolver(
         FRACGM_MAX_ITERATION, FRACGM_TOL, FRACGM_NOISE_BOUND, FRACGM_C

@@ -6,6 +6,8 @@
 
 #include "fracgm.h"
 
+#define ENABLE_MAX_CLIQUE_INLIER_SELECTION
+
 Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> read_matrix(std::string filename) {
   std::ifstream file(filename);
   std::string line;
@@ -73,11 +75,32 @@ get_registration_test_data() {
   return std::make_tuple(src, dst, gt);
 }
 
+std::tuple<fracgm::PointCloud, fracgm::PointCloud> perform_max_clique_inlier_selection(const fracgm::PointCloud &pc1,
+                                                                                       const fracgm::PointCloud &pc2,
+                                                                                       double noise_bound,
+                                                                                       double pmc_timeout) {
+  auto indices = fracgm::max_clique_inlier_selection(pc1, pc2, noise_bound, pmc_timeout);
+
+  if (indices.empty()) return std::make_tuple(pc1, pc2);
+
+  fracgm::PointCloud inlier_pc1(indices.size(), 3);
+  fracgm::PointCloud inlier_pc2(indices.size(), 3);
+
+  for (size_t idx = 0; idx < indices.size(); idx++) {
+    auto index = indices[idx];
+    inlier_pc1.row(idx) = pc1.row(index);
+    inlier_pc2.row(idx) = pc2.row(index);
+  }
+
+  return std::make_tuple(inlier_pc1, inlier_pc2);
+}
+
 int main() {
   const double c = 1.0;
   const double tol = 1e-6;
   size_t max_iteration = 100;
   double noise_bound = 0.1;
+  double pmc_timeout = 3600.0;
 
   std::cout << "[[ Example for FracGM-based rotation solver ]]" << "\n\n";
   auto [src_rot, dst_rot, gt_rot] = get_rotation_test_data();
@@ -90,7 +113,15 @@ int main() {
   std::cout << "[[ Example for FracGM-based registration solver ]]" << "\n\n";
   auto [src_reg, dst_reg, gt_reg] = get_registration_test_data();
 
+#ifdef ENABLE_MAX_CLIQUE_INLIER_SELECTION
+  auto [inlier_src_reg, inlier_dst_reg] =
+      perform_max_clique_inlier_selection(src_reg, dst_reg, noise_bound, pmc_timeout);
+
+  auto est_reg =
+      fracgm::LinearRegistrationSolver(max_iteration, tol, c, noise_bound).solve(inlier_src_reg, inlier_dst_reg);
+#else
   auto est_reg = fracgm::LinearRegistrationSolver(max_iteration, tol, c, noise_bound).solve(src_reg, dst_reg);
+#endif
 
   std::cout << "GT: " << '\n' << gt_reg << "\n\n";
   std::cout << "FracGM: " << '\n' << est_reg << "\n\n";
