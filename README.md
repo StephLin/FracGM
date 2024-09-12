@@ -14,6 +14,7 @@ wrappers.
 - [FracGM](#fracgm)
   - [:gear: Setup](#gear-setup)
   - [:seedling: Example Usage](#seedling-example-usage)
+  - [:gift: Acknowledgement](#gift-acknowledgement)
 
 ## :gear: Setup
 
@@ -50,3 +51,8 @@ python3 -m pip install numpy "maturin[patchelf]"
 - [Rust](examples/rust)
 - [C++](examples/cpp)
 - [Python](examples/python)
+
+## :gift: Acknowledgement
+
+The feature of maximum clique inlier selection (MCIS) refers to [TEASER++'s implementation](https://github.com/MIT-SPARK/TEASER-plusplus), which is under the MIT license.
+We modify the implementation to bundle with the FracGM Rust interface.
