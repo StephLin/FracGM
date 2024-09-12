@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 [dependencies]
 pyo3 = { version = "0.21.1", features = ["experimental-declarative-modules"] }
 numpy = "0.21.0"
-fracgm = { path = "../fracgm" }
+fracgm = { path = "../fracgm", features = ["mcis"] }

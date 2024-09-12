@@ -1,8 +1,8 @@
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
-use pyo3::{pyclass, pymethods, pymodule, Bound, PyResult, Python};
+use pyo3::{pyclass, pyfunction, pymethods, pymodule, Bound, PyResult, Python};
 
 use fracgm::{
-    registration, rotation,
+    mcis, registration, rotation,
     solver::{self, GemanMcclureSolver, GemanMcclureSolverDiagnostic},
     translation,
 };
@@ -258,6 +258,19 @@ impl DecoupledRegistrationSolver {
     }
 }
 
+#[pyfunction]
+pub fn max_clique_inlier_selection<'py>(
+    pc1: PyReadonlyArray2<'py, f64>,
+    pc2: PyReadonlyArray2<'py, f64>,
+    noise_bound: f64,
+    pmc_timeout: f64,
+) -> Vec<usize> {
+    let pc1 = pc1.as_array().to_owned();
+    let pc2 = pc2.as_array().to_owned();
+
+    mcis::max_clique_inlier_selection(&pc1, &pc2, noise_bound, pmc_timeout)
+}
+
 #[pymodule]
 #[pyo3(name = "fracgm")]
 mod py_module {
@@ -283,4 +296,7 @@ mod py_module {
 
     #[pymodule_export]
     use DecoupledRegistrationSolver;
+
+    #[pymodule_export]
+    use max_clique_inlier_selection;
 }

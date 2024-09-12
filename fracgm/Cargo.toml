@@ -5,6 +5,15 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["mcis"]
+mcis = []
+
 [dependencies]
+libc = "0.2.158"
 ndarray = "0.15.6"
 ndarray-linalg = { version = "0.16.0", features = ["openblas-system"] }
+num_cpus = "1.16.0"
+
+[build-dependencies]
+cc = "1.1.18"

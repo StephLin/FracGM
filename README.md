@@ -7,7 +7,7 @@ Geman-McClure Robust Estimator." This work is submitted to IEEE Robotics and
 Automation Letters (RA-L).
 
 This library is written in **Rust** and we support **C++** and **Python**
-wrapper.
+wrappers.
 
 **Table of Contents**
 
@@ -20,6 +20,9 @@ wrapper.
 Tested in Ubuntu 22.04
 
 ```bash
+git clone --recurse-submodules -j8 https://github.com/StephLin/FracGM.git
+git submodule update --init
+
 # Rust
 curl https://sh.rustup.rs -sSf | sh
 
@@ -27,17 +30,18 @@ curl https://sh.rustup.rs -sSf | sh
 sudo apt update
 sudo apt install -y libopenblas-dev pkg-config libssl-dev cmake
 
-# Python
-sudo apt install -y python3-pip python3-dev
+# C++ (for maximum clique inlier selection)
+sudo apt install -y g++
 
 # (Optional) Setup the C++ wrapper
 sudo apt install -y g++
-python3 -m pip install meson ninjs
+python3 -m pip install meson ninja
 
 # (Optional) Setup the Python wrapper
 # python3 -m pip install virtualenv
 # python3 -m virtualenv venv
 # source venv/bin/activate
+sudo apt install -y python3-pip python3-dev
 python3 -m pip install numpy "maturin[patchelf]"
 ```
 

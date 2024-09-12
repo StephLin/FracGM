@@ -1,0 +1,6 @@
+[submodule "fracgm/src/pmc/pmc"]
+	path = fracgm/src/pmc/pmc
+	url = https://github.com/jingnanshi/pmc
+[submodule "fracgm/src/mcis/eigen"]
+	path = fracgm/src/mcis/eigen
+	url = https://gitlab.com/libeigen/eigen.git
