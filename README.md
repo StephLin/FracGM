@@ -4,26 +4,39 @@
 
 Rust implementation of "FracGM: A Fast Fractional Programming Technique for
 Geman-McClure Robust Estimator." This work is submitted to IEEE Robotics and
-Automation Letters (RA-L).
+Automation Letters (RA-L). This library is written in **Rust** and we support
+**C++** and **Python** wrappers.
 
-This library is written in **Rust** and we support **C++** and **Python**
-wrappers.
+| ![](./assets/images/demo-iterations.gif) | ![](./assets/images/demo-registration.gif) |
+| ---------------------------------------- | ------------------------------------------ |
+
+**About FracGM**
+
+FracGM is a fast and accurate algorithm for Geman-McClure robust estimation,
+which leverages fractional programming techniques. It exhibits fast convergence
+rate and well outlier rejection capability. In addition, the global optimality
+of the proposed solver can be guaranteed under given conditions.
+
+For more, please refer to our paper:
+
+- [Bang-Shien Chen](https://github.com/doggydoggy0101), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _submitted to IEEE Robotics and Automation Letters (RA-L)_, 2024. (paper) (preprint) ([code](https://github.com/StephLin/FracGM))
 
 **Table of Contents**
 
 - [FracGM](#fracgm)
   - [:gear: Setup](#gear-setup)
-  - [:seedling: Example Usage](#seedling-example-usage)
+    - [Prerequisites](#prerequisites)
+    - [Building FracGM](#building-fracgm)
+  - [:seedling: Example Usages](#seedling-example-usages)
   - [:gift: Acknowledgement](#gift-acknowledgement)
 
 ## :gear: Setup
 
-Tested in Ubuntu 22.04
+The following setup is tested in Ubuntu 22.04.
+
+### Prerequisites
 
 ```bash
-git clone --recurse-submodules -j8 https://github.com/StephLin/FracGM.git
-git submodule update --init
-
 # Rust
 curl https://sh.rustup.rs -sSf | sh
 
@@ -43,14 +56,38 @@ python3 -m pip install meson ninja
 # python3 -m virtualenv venv
 # source venv/bin/activate
 sudo apt install -y python3-pip python3-dev
-python3 -m pip install numpy "maturin[patchelf]"
+python3 -m pip install numpy "maturin[patchelf]" rich
 ```
 
-## :seedling: Example Usage
+### Building FracGM
 
-- [Rust](examples/rust)
-- [C++](examples/cpp)
-- [Python](examples/python)
+```bash
+git clone --recurse-submodules -j8 https://github.com/StephLin/FracGM.git
+cd FracGM
+
+# If you do not clone FracGM with --recurse-submodules option,
+# you may need to run the following command.
+git submodule update --init
+
+# 😎 Build FracGM with Native Rust support
+cd fracgm
+cargo build --release
+
+# 🥐 Build FracGM with C++ wrapper
+python3 scripts/build_fracgm_cxx_library.py
+# header files: ./fracgm-cxx/include
+# library file: ./target/release/libfracgm_cxx.so
+
+# 🐍 Build FracGM with Python wrapper
+python3 scripts/build_fracgm_python_package.py
+python3 -m pip install $(ls ./target/wheels/*.whl) --force-reinstall
+```
+
+## :seedling: Example Usages
+
+- [:sunglasses: Rust](examples/rust)
+- [:croissant: C++](examples/cpp)
+- [:snake: Python](examples/python)
 
 ## :gift: Acknowledgement
 
