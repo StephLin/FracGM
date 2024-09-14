@@ -107,7 +107,7 @@ int main() {
 
   auto est_rot = fracgm::LinearRotationSolver(max_iteration, tol, c, noise_bound).solve(src_rot, dst_rot);
 
-  std::cout << "GT: " << '\n' << gt_rot << "\n\n";
+  std::cout << "Ground Truth: " << '\n' << gt_rot << "\n\n";
   std::cout << "FracGM: " << '\n' << est_rot << "\n\n";
 
   std::cout << "[[ Example for FracGM-based registration solver ]]" << "\n\n";
@@ -123,7 +123,7 @@ int main() {
   auto est_reg = fracgm::LinearRegistrationSolver(max_iteration, tol, c, noise_bound).solve(src_reg, dst_reg);
 #endif
 
-  std::cout << "GT: " << '\n' << gt_reg << "\n\n";
+  std::cout << "Ground Truth: " << '\n' << gt_reg << "\n\n";
   std::cout << "FracGM: " << '\n' << est_reg << "\n\n";
 
   std::cout << "[[ Done ]]" << '\n';

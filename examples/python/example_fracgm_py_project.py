@@ -58,7 +58,7 @@ def main():
         FRACGM_MAX_ITERATION, FRACGM_TOL, FRACGM_NOISE_BOUND, FRACGM_C
     ).solve(src_rot, dst_rot)
 
-    print(f"GT:\n {gt_rot}", end="\n\n")
+    print(f"Ground Truth:\n {gt_rot}", end="\n\n")
     print(f"FracGM:\n {est_rot}", end="\n\n")
 
     print("[[ Example for FracGM-based registration solver ]]", end="\n\n")
@@ -73,7 +73,7 @@ def main():
         FRACGM_MAX_ITERATION, FRACGM_TOL, FRACGM_NOISE_BOUND, FRACGM_C
     ).solve(src_reg, dst_reg)
 
-    print(f"GT:\n {gt_reg}", end="\n\n")
+    print(f"Ground Truth:\n {gt_reg}", end="\n\n")
     print(f"FracGM:\n {est_reg}", end="\n\n")
 
     print("[[ Done ]]")
