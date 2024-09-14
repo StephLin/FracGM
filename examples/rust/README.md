@@ -1,4 +1,4 @@
-# Rust Example for FracGM Solvers
+# :crab: Rust Example for FracGM Solvers
 
 This example shows how to use FracGM solver in Rust.
 

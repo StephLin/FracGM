@@ -1,4 +1,4 @@
-# C++ Example for FracGM Solvers
+# :croissant: C++ Example for FracGM Solvers
 
 This example shows how to use FracGM solver in C++.
 

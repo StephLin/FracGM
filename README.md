@@ -69,7 +69,7 @@ cd FracGM
 # you may need to run the following command.
 git submodule update --init
 
-# 😎 Build FracGM with Native Rust support
+# 🦀 Build FracGM with Native Rust support
 cd fracgm
 cargo build --release
 
@@ -85,7 +85,7 @@ python3 -m pip install $(ls ./target/wheels/*.whl) --force-reinstall
 
 ## :seedling: Example Usages
 
-- [:sunglasses: Rust](examples/rust)
+- [:crab: Rust](examples/rust)
 - [:croissant: C++](examples/cpp)
 - [:snake: Python](examples/python)
 

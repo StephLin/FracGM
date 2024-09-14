@@ -1,4 +1,4 @@
-# Python Example for FracGM Solvers
+# :snake: Python Example for FracGM Solvers
 
 This example shows how to use FracGM solver in Python 3.
 
