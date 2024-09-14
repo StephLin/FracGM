@@ -173,12 +173,12 @@ pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
             vec = self.solve_x(&mat_a);
             self.update_terms_cache(&mut terms, &vec);
 
+            (beta, mu) = self.solve_beta_mu(&terms);
+
             let psi_norm = self.compute_psi_norm(&beta, &mu, &terms);
             if psi_norm < self.tol() {
                 break;
             }
-
-            (beta, mu) = self.solve_beta_mu(&terms);
         }
 
         self.project(&self.vec_to_mat(&vec))
@@ -266,13 +266,13 @@ pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R>
             vec = self.solve_x(&mat_a);
             self.update_terms_cache(&mut terms, &vec);
 
+            (beta, mu) = self.solve_beta_mu(&terms);
+
             let psi_norm = self.compute_psi_norm(&beta, &mu, &terms);
             self.update_diagnostics(&vec, &beta, &mu, &terms, &mut iterations);
             if psi_norm < self.tol() {
                 break;
             }
-
-            (beta, mu) = self.solve_beta_mu(&terms);
         }
 
         Diagnostic {
