@@ -77,7 +77,6 @@ fn perform_max_clique_inlier_selection(
     pmc_timeout: f64,
 ) -> (Array2<f64>, Array2<f64>) {
     let indices = max_clique_inlier_selection(src, dst, noise_bound, pmc_timeout);
-    println!("{:?}", indices);
 
     let src = src.select(Axis(0), &indices);
     let dst = dst.select(Axis(0), &indices);
@@ -98,7 +97,7 @@ fn main() {
     let est_rot =
         LinearRotationSolver::new(max_iteration, tol, noise_bound, c).solve(&src_rot, &dst_rot);
 
-    println!("GT:\n{:?}\n", gt_rot);
+    println!("Ground Truth:\n{:?}\n", gt_rot);
     println!("FracGM:\n{:?}\n", est_rot);
 
     println!("[[ Example for FracGM-based registration solver ]]\n");
@@ -115,13 +114,13 @@ fn main() {
         let est_reg = LinearRegistrationSolver::new(max_iteration, tol, noise_bound, c)
             .solve(&src_reg, &dst_reg);
 
-        println!("GT:\n{:?}\n", gt_reg);
+        println!("Ground Truth:\n{:?}\n", gt_reg);
         println!("FracGM:\n{:?}\n", est_reg);
     } else {
         let est_reg = LinearRegistrationSolver::new(max_iteration, tol, noise_bound, c)
             .solve(&src_reg, &dst_reg);
 
-        println!("GT:\n{:?}\n", gt_reg);
+        println!("Ground Truth:\n{:?}\n", gt_reg);
         println!("FracGM:\n{:?}\n", est_reg);
     }
 
