@@ -9,6 +9,8 @@ example.
 ## :gear: Build
 
 ```sh
+cd examples/cpp
+
 # Build the FracGM C++ wrapper library
 python3 ../../scripts/build_fracgm_cxx_library.py
 
