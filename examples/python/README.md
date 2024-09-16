@@ -17,7 +17,8 @@ python3 -m pip install $(ls ../../target/wheels/*.whl) --force-reinstall
 ## :running: Run
 
 ```sh
-python3 ./examples/python/example_fracgm_py_project.py
+cd examples/python
+python3 ./example_fracgm_py_project.py
 ```
 
 This main function will read two point clouds from [`data`](../data) folder and
