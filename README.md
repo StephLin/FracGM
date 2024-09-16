@@ -39,7 +39,7 @@ The following setup is tested in Ubuntu 22.04.
 ```bash
 # Rust
 curl https://sh.rustup.rs -sSf | sh
-# (Configuration)
+# Use the following command to load the Rust environment in the same shell:
 # . "$HOME/.cargo/env"            # For sh/bash/zsh/ash/dash/pdksh
 # source "$HOME/.cargo/env.fish"  # For fish
 
