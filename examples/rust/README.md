@@ -5,6 +5,7 @@ This example shows how to use FracGM solver in Rust.
 ## :gear: Build
 
 ```sh
+cd examples/rust
 cargo build --release --target-dir ./target
 ```
 

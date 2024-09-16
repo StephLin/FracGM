@@ -5,6 +5,8 @@ This example shows how to use FracGM solver in Python 3.
 ## :gear: Install the FracGM Python Wrapper Library
 
 ```sh
+cd examples/python
+
 # Build the FracGM Python wrapper library
 python3 -m pip install "maturin[patchelf]" numpy rich
 python3 ../../scripts/build_fracgm_python_package.py
