@@ -12,7 +12,8 @@ python3 -m pip install "maturin[patchelf]" numpy rich
 python3 ../../scripts/build_fracgm_python_package.py
 
 # Install the FracGM Python wrapper library
-# (Notice: You should checkout the real path to the wheel file)
+# (Notice: You should check the real path to the wheel file
+#  e.g., ../../target/wheels/fracgm-0.1.0-cp310-cp310-manylinux_2_34_x86_64.whl)
 python3 -m pip install $(ls ../../target/wheels/*.whl) --force-reinstall
 ```
 
