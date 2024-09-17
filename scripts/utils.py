@@ -1,10 +1,29 @@
 import subprocess as sp
+import typing as T
 from functools import lru_cache
 from pathlib import Path
 
-from rich.console import Console
+try:
+    from rich.console import Console
 
-console = Console()
+    console = Console()
+except ImportError:
+    import re
+
+    class Console:
+        def __init__(self):
+            print("Notice: Rich is not installed. Fallback to plain console.")
+
+        def print(self, *args, **kwargs):
+            if "justify" in kwargs and kwargs["justify"] == "right":
+                kwargs.pop("justify")
+                args = tuple([" " * 80] + list(args))
+
+            args = tuple(re.sub(r"\[[A-Za-z_ ]+\]", "", str(arg)) for arg in args)
+
+            print(*args, **kwargs)
+
+    console = Console()
 
 
 def get_console() -> Console:
@@ -16,7 +35,7 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent
 
 
-def run_command(command: str, cwd: Path | None = None):
+def run_command(command: str, cwd: T.Optional[Path] = None):
     if cwd is None:
         cwd = get_project_root()
 
