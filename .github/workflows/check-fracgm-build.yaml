@@ -1,4 +1,4 @@
-name: check-rust-build
+name: check-fracgm-build
 
 on:
   pull_request:
