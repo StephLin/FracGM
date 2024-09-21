@@ -1,6 +1,9 @@
 # FracGM
 
-[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=flat)](https://opensource.org/licenses/BSD-3-Clause)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg?style=flat-square)](https://opensource.org/licenses/BSD-3-Clause)
+[![Rust Formatter](https://img.shields.io/badge/Rust_Formatter-rustfml-orangered?style=flat-square)](https://github.com/rust-lang/rustfmt)
+[![Python Formatter](https://img.shields.io/badge/Python_Formatter-ruff-black?style=flat-square)](https://github.com/astral-sh/ruff)
+[![C++ Formatter](https://img.shields.io/badge/C++_Formatter-clang--format_18.1.8-lightblue?style=flat-square)](https://releases.llvm.org/18.1.8/tools/clang/tools/extra/docs/ReleaseNotes.html)
 
 Rust implementation of "FracGM: A Fast Fractional Programming Technique for
 Geman-McClure Robust Estimator." This work is submitted to IEEE Robotics and

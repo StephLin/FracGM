@@ -1,0 +1,74 @@
+name: check-rust-build
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  fracgm-rust-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Install ndarray-linalg dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libopenblas-dev pkg-config libssl-dev cmake
+      - name: Build fracgm
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --package fracgm
+  fracgm-python-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Install ndarray-linalg dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libopenblas-dev pkg-config libssl-dev cmake
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade numpy maturin patchelf
+      - name: Build fracgm-python
+        working-directory: ./fracgm-python
+        run: python -m maturin build --release
+  fracgm-cxx-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Install ndarray-linalg dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y libopenblas-dev pkg-config libssl-dev cmake
+      - name: Build fracgm-cxx
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --package fracgm-cxx

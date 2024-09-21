@@ -1,0 +1,44 @@
+name: check-code-quality
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-rust-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Check Rust code formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --check
+  
+  check-python-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Python code formatting
+        uses: chartboost/ruff-action@v1
+        with:
+          args: format --check
+  
+  check-cpp-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check C++ code formatting
+        uses: DoozyX/clang-format-lint-action@v0.18.1
+        with:
+          source: '.'
+          exclude: './fracgm/src/mcis/eigen ./fracgm/src/mcis/pmc ./examples/cpp/builddir'
+          extensions: 'h,c,cpp'
+          clangFormatVersion: '18.1.8'
