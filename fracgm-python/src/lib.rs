@@ -1,3 +1,7 @@
+// Copyright 2024 the FracGM authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 use numpy::{IntoPyArray, PyArray2, PyReadonlyArray2};
 use pyo3::{pyclass, pyfunction, pymethods, pymodule, Bound, PyResult, Python};
 
