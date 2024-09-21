@@ -76,8 +76,7 @@ cd FracGM
 git submodule update --init
 
 # 🦀 Build FracGM with Native Rust support
-cd fracgm
-cargo build --release
+cargo build --release --package fracgm
 
 # 🥐 Build FracGM with C++ wrapper
 python3 scripts/build_fracgm_cxx_library.py
