@@ -1,3 +1,7 @@
+// Copyright 2024 the FracGM authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 extern crate libc;
 
 use ndarray::Array2;
@@ -37,6 +41,19 @@ extern "C" {
     ) -> CBufferI32;
 }
 
+/// This function takes two point clouds and their noise bound, and timeout in
+/// seconds for the max clique solver, and returns the indices of inlier
+/// correspondences.
+///
+/// This function invokes the max clique inlier selection (MCIS) algorithm
+/// coming from the TEASER++ solver.
+///
+/// The max clique solver is run with the number of threads equal to the number
+/// of logical CPU cores available.
+///
+/// # Returns
+///
+/// Indices of inlier correspondences.
 pub fn max_clique_inlier_selection(
     pc1: &Array2<f64>,
     pc2: &Array2<f64>,

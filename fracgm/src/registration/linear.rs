@@ -1,3 +1,7 @@
+// Copyright 2024 the FracGM authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 use ndarray::linalg::kron;
 use ndarray::prelude::*;
 use ndarray::Array2;
@@ -10,10 +14,15 @@ use crate::solver::{
 };
 use crate::utils;
 
+/// FracGM-based registration solver with linear (naive) relaxation.
 pub struct LinearSolver {
+    /// The maximum number of iterations allowed.
     pub max_iteration: usize,
+    /// The tolerance for convergence.
     pub tol: f64,
+    /// The noise bound (sigma) for the Geman-McClure robust function (default: 0.1).
     pub noise_bound: f64,
+    /// The value of $c$ defined in Geman-McClure robust function (default: 1.0).
     pub c: f64,
 }
 
