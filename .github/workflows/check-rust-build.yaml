@@ -20,7 +20,9 @@ jobs:
           toolchain: stable
           override: true
       - name: Install ndarray-linalg dependencies
-        run: apt install -y libopenblas-dev pkg-config libssl-dev cmake
+        run: |
+          sudo apt update
+          sudo apt install -y libopenblas-dev pkg-config libssl-dev cmake
       - name: Build fracgm
         uses: actions-rs/cargo@v1
         with:
