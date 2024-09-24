@@ -406,7 +406,6 @@ pub trait GemanMcclureSolver<R: R2>: FractionalProgrammingMaterials<R> {
             }
 
             (beta, mu) = self.solve_beta_mu(&terms);
-
         }
 
         self.project(&self.vec_to_mat(&vec))
@@ -536,7 +535,6 @@ pub trait GemanMcclureSolverDiagnostic<R: R2>: FractionalProgrammingMaterials<R>
             }
 
             (beta, mu) = self.solve_beta_mu(&terms);
-            
         }
 
         Diagnostic {
