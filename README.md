@@ -22,7 +22,7 @@ of the proposed solver can be guaranteed under given conditions.
 
 For more, please refer to our paper:
 
-- [Bang-Shien Chen](https://github.com/doggydoggy0101), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _submitted to IEEE Robotics and Automation Letters (RA-L)_, 2024. (paper) (preprint) ([code](https://github.com/StephLin/FracGM))
+- [Bang-Shien Chen](https://github.com/doggydoggy0101), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _submitted to IEEE Robotics and Automation Letters (RA-L)_, 2024. (paper) ([preprint](https://arxiv.org/abs/2409.13978)) ([code](https://github.com/StephLin/FracGM))
 
 **Table of Contents**
 
