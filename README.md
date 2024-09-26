@@ -31,6 +31,7 @@ For more, please refer to our paper:
     - [Prerequisites](#prerequisites)
     - [Building FracGM](#building-fracgm)
   - [:seedling: Example Usages](#seedling-example-usages)
+  - [:coffee: Supplementary Materials](#coffee-supplementary-materials)
   - [:gift: Acknowledgement](#gift-acknowledgement)
 
 ## :gear: Setup
@@ -95,6 +96,12 @@ python3 -m pip install $(ls ./target/wheels/*.whl) --force-reinstall
 - [:crab: Rust](examples/rust)
 - [:croissant: C++](examples/cpp)
 - [:snake: Python](examples/python)
+
+## :coffee: Supplementary Materials
+
+- [:page_facing_up: Appendix A.](appendix/appx_A) A simple example of FracGM with global optimal guarantees
+- [:page_facing_up: Appendix B.](appendix/appx_B) Tightness of linear relaxation
+- [:page_facing_up: Appendix C.](appendix/appx_C) Sensitivity of initial guess
 
 ## :gift: Acknowledgement
 
