@@ -72,3 +72,14 @@ jobs:
         with:
           command: build
           args: --release --package fracgm-cxx
+  fracgm-docker-python-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build
+        run: |
+          cd docker
+          docker build -t fracgm .
