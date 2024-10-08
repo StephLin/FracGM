@@ -1,4 +1,4 @@
-### Tightness of linear relaxation
+# :page_facing_up: Tightness of linear relaxation
 
 For FracGM-based rotation and registration solvers, the relaxation is tight if solutions of the relaxed program in $\mathbb{R}^{3\times 3}$ and $\mathbb{R}^{4\times 4}$ are also within $\text{SO}(3)$ and $\text{SE}(3)$ respectively.
 In practice, we can evaluate the tightness of the relaxation by checking the orthogonality and determinant of a solution given by the relaxed program.

@@ -1,6 +1,7 @@
-### A simple example of FracGM with global optimal guarantees
+# :page_facing_up: A simple example of FracGM with global optimal guarantees
 
-Here we give a simple example that one can verify the differentiability and Lipschitz continuity of $\psi(\boldsymbol{\alpha},x_{\boldsymbol{\alpha}})$. Suppose we have an optimization problem:
+We give a simple example that satisfies Proposition 3 as follows. 
+Suppose we have an optimization problem:
 
 $$
     \min_x\ \frac{f(x)}{h(x)}=\frac{x^2}{x^2+1},
@@ -50,7 +51,21 @@ $$
 then $\psi(\boldsymbol{\alpha},x_{\boldsymbol{\alpha}})$ is Lipschitz continuous. Solving such (simple) case by FracGM guarantees that the solution is global optimal.
 
 
-### Usage
+To verify the above statement empirically, we feed various initial guesses to FracGM to examine the global optimality as follows:
+
+| Initial Guess | FracGM's 1$^\text{st}$ Iteration | FracGM's 2$^\text{nd}$ Iteration |
+|---------------|----------------------------------|----------------------------------|
+| $-10^{5}$     | $-2.20\times 10^{-4}$            | $0.00\times 10^{-13}$            |
+| $-10^{3}$     | $-1.92\times 10^{-10}$           | $0.00\times 10^{-13}$            |
+| $-10^{1}$     | $-5.10\times 10^{-8}$            | $0.00\times 10^{-13}$            |
+| $-10^{0}$     | $-2.73\times 10^{-9}$            | $0.00\times 10^{-13}$            |
+| $10^{0}$      | $-2.73\times 10^{-9}$            | $0.00\times 10^{-13}$            |
+| $10^{1}$      | $-5.10\times 10^{-8}$            | $0.00\times 10^{-13}$            |
+| $10^{3}$      | $-1.92\times 10^{-10}$           | $0.00\times 10^{-13}$            |
+| $10^{5}$      | $-2.20\times 10^{-4}$            | $0.00\times 10^{-13}$            |
+
+
+## :running: Run
 ```
 cd appendix/appx_A
 python ./main.py
