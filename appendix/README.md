@@ -1,4 +1,4 @@
-# Supplement materials
+# :coffee: Supplementary Materials
 
 [:page_facing_up: Appendix A.](appx_A) A simple example of FracGM with global optimal guarantees
 
