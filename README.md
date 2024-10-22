@@ -5,10 +5,10 @@
 [![Python Formatter](https://img.shields.io/badge/Python_Formatter-ruff-black?style=flat-square)](https://github.com/astral-sh/ruff)
 [![C++ Formatter](https://img.shields.io/badge/C++_Formatter-clang--format_18.1.8-lightblue?style=flat-square)](https://releases.llvm.org/18.1.8/tools/clang/tools/extra/docs/ReleaseNotes.html)
 
-Rust implementation of "FracGM: A Fast Fractional Programming Technique for
-Geman-McClure Robust Estimator." This work is submitted to IEEE Robotics and
-Automation Letters (RA-L). This library is written in **Rust** and we support
-**C++** and **Python** wrappers.
+Official implementation of "FracGM: A Fast Fractional Programming Technique for
+Geman-McClure Robust Estimator." This work is accpeted for publication by IEEE
+Robotics and Automation Letters (RA-L). This library is written in **Rust** and
+we support **Rust**, **C++**, and **Python** interfaces.
 
 | ![](./assets/images/demo-iterations.gif) | ![](./assets/images/demo-registration.gif) |
 | ---------------------------------------- | ------------------------------------------ |
@@ -22,7 +22,7 @@ of the proposed solver can be guaranteed under given conditions.
 
 For more, please refer to our paper:
 
-- [Bang-Shien Chen](https://dgbshien.com/), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _submitted to IEEE Robotics and Automation Letters (RA-L)_, 2024. (paper) ([preprint](https://arxiv.org/abs/2409.13978)) ([code](https://github.com/StephLin/FracGM))
+- [Bang-Shien Chen](https://dgbshien.com/), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _To appear in IEEE Robotics and Automation Letters (RA-L)_, 2024. (paper) ([preprint](https://arxiv.org/pdf/2409.13978)) ([code](https://github.com/StephLin/FracGM))
 
 **Table of Contents**
 
