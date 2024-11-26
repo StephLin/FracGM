@@ -22,7 +22,20 @@ of the proposed solver can be guaranteed under given conditions.
 
 For more, please refer to our paper:
 
-- [Bang-Shien Chen](https://dgbshien.com/), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _IEEE Robotics and Automation Letters (RA-L)_, 2024. ([paper](https://doi.org/10.1109/lra.2024.3495372)) ([preprint](https://arxiv.org/pdf/2409.13978)) ([code](https://github.com/StephLin/FracGM))
+- [Bang-Shien Chen](https://dgbshien.com/), [Yu-Kai Lin](https://github.com/StephLin), [Jian-Yu Chen](https://github.com/Jian-yu-chen), [Chih-Wei Huang](https://sites.google.com/ce.ncu.edu.tw/cwhuang/), [Jann-Long Chern](https://math.ntnu.edu.tw/~chern/), [Ching-Cherng Sun](https://www.dop.ncu.edu.tw/en/Faculty/faculty_more/9), **FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator**. _IEEE Robotics and Automation Letters (RA-L)_, vol. 9, no. 12, pp. 11666-11673, Dec. 2024. ([paper](https://doi.org/10.1109/lra.2024.3495372)) ([preprint](https://arxiv.org/pdf/2409.13978)) ([code](https://github.com/StephLin/FracGM))
+
+```bibtex
+@article{Chen24FracGM,
+  author={Chen, Bang-Shien and Lin, Yu-Kai and Chen, Jian-Yu and Huang, Chih-Wei and Chern, Jann-Long and Sun, Ching-Cherng},
+  journal={IEEE Robotics and Automation Letters},
+  title={FracGM: A Fast Fractional Programming Technique for Geman-McClure Robust Estimator},
+  year={2024},
+  volume={9},
+  number={12},
+  pages={11666-11673},
+  doi={10.1109/LRA.2024.3495372}
+}
+```
 
 **Table of Contents**
 
